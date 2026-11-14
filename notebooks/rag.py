@@ -1,6 +1,6 @@
 # rag_ollama.py — Sistema RAG local con Ollama + Gemma
 # Requisitos: pip install ollama numpy
-# Modelos: ollama pull gemma3 && ollama pull nomic-embed-text
+# Modelos: ollama pull gemma4 && ollama pull nomic-embed-text
 
 import ollama
 import numpy as np
@@ -424,19 +424,26 @@ def ask(db: VectorDB, question: str, verbose: bool = False) -> dict:
     }
  
  
-#  EJEMPLO DE USO
- 
+#  INTERFAZ DE LÍNEA DE COMANDOS
+
 if __name__ == "__main__":
- 
-    # Inicializar la DB y cargar el índice existente (si hay)
-    db = VectorDB()
-    db.load()  # carga lo que ya estaba indexado
+    import argparse
 
-    # Preguntas de prueba
-    resultado = ask(db, "¿Qué es un agente inteligente?", verbose=True)
-    print(resultado["answer"])
-
-
-    #db.add_folder("data/docs/", extensions=[".pdf"])
-    #db.save()
-    #db.status()
+    parser = argparse.ArgumentParser(description="Indexar documentos y consultar el RAG local.")
+    parser.add_argument("--index", metavar="CARPETA", help="Indexar PDFs, TXT y Markdown de una carpeta.")
+    parser.add_argument("--ask", metavar="PREGUNTA", help="Consultar el índice guardado.")
+    args = parser.parse_args()
+    if not args.index and not args.ask:
+        parser.print_help()
+    else:
+        db = VectorDB()
+        db.load()
+        if args.index:
+            if not Path(args.index).is_dir():
+                parser.error(f"La carpeta no existe: {args.index}")
+            db.add_folder(args.index)
+            db.save()
+            db.status()
+        if args.ask:
+            resultado = ask(db, args.ask, verbose=True)
+            print(resultado["answer"])

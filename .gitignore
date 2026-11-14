@@ -1,9 +1,35 @@
+# Entornos virtuales
 .venv/
+venv/
+env/
 
+# Python cache
 __pycache__/
-
-.env
-
 *.pyc
 
-*.zip
+# VS Code
+.vscode/
+
+# Modelos e índices vectoriales
+index/
+*.faiss
+*.pkl
+
+# Datos
+data/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Archivos del sistema
+.DS_Store
+
+
+# html
+*.html
+
+# Configuración privada e índice generado
+.env
+.env.*
+!.env.example
+vector_db.json

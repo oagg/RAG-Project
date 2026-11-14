@@ -1,0 +1,7 @@
+RAG: recuperación y generación
+
+Un sistema RAG recupera fragmentos de documentos y los incorpora como contexto a un modelo de lenguaje para responder preguntas.
+
+En este proyecto, nomic-embed-text genera vectores para representar los fragmentos y las consultas. La similitud coseno permite seleccionar los fragmentos más cercanos a una pregunta. Ollama ejecuta el modelo generador localmente y Streamlit presenta la respuesta y las fuentes recuperadas.
+
+El índice se guarda en vector_db.json. Los documentos nuevos o modificados se procesan al volver a indexar la carpeta.

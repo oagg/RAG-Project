@@ -1,7 +1,0 @@
-{
-    "python.analysis.extraPaths": [
-        "./src"
-    ],
-    "python.terminal.executeInFileDir": false,
-    "terminal.integrated.cwd": "${workspaceFolder}"
-}

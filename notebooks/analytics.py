@@ -1,7 +1,7 @@
 # analytics.py — Análisis completo de rendimiento del sistema RAG
 #
 # MÉTRICAS IMPLEMENTADAS:
-#   1. Precisión de recuperación  — ¿trae los chunks correctos?
+#   1. Tasa de aciertos de recuperación  — ¿trae los chunks correctos?
 #   2. Calidad de respuesta       — ROUGE + BERTScore
 #   3. Velocidad por etapa        — embedding, búsqueda, generación
 #
@@ -173,12 +173,12 @@ def bertscore_f1(hypothesis: str, reference: str) -> float:
 #
 #  Hit@K = 1 si el doc esperado está en los K resultados
 #  Hit@K = 0 si no está
-#  Precisión@K = promedio de Hit@K sobre todas las preguntas
+#  Hit rate@K = promedio de Hit@K sobre todas las preguntas
 # ============================================================
 
 def evaluar_recuperacion(db: VectorDB) -> dict:
     print("\n" + "="*50)
-    print("MÉTRICA 1: Precisión de recuperación")
+    print("MÉTRICA 1: Tasa de aciertos de recuperación")
     print("="*50)
 
     resultados = []
@@ -200,10 +200,10 @@ def evaluar_recuperacion(db: VectorDB) -> dict:
         estado = "Good" if hit else "No good"
         print(f"\n{estado} {item['question'][:60]}")
         print(f"   Esperado:    {doc_esperado}")
-        print(f"   Recuperado:  {docs_recuperados[0]} (score={top_score:.3f})")
+        print(f"   Recuperado:  {(docs_recuperados[0] if docs_recuperados else 'Sin resultados')} (score={top_score:.3f})")
 
     precision = sum(r["hit"] for r in resultados) / len(resultados)
-    print(f"\nPrecisión@5: {precision:.0%} ({sum(r['hit'] for r in resultados)}/{len(resultados)})")
+    print(f"\nHit@5: {precision:.0%} ({sum(r['hit'] for r in resultados)}/{len(resultados)})")
     return {"resultados": resultados, "precision": precision}
 
 
@@ -341,7 +341,7 @@ def grafico_precision_recuperacion(eval_rec: dict):
 
     ax.set_xlim(0.4, 1.05)
     ax.set_xlabel("Score de recuperación (similitud coseno)", fontsize=11)
-    ax.set_title(f"Precisión de recuperación  —  {eval_rec['precision']:.0%} Hit@5",
+    ax.set_title(f"Tasa de aciertos de recuperación  —  {eval_rec['precision']:.0%} Hit@5",
                  fontsize=14, color="#f0ede6", pad=16)
     ax.grid(axis="x", zorder=1)
     ax.spines[["top", "right", "bottom"]].set_visible(False)
@@ -472,7 +472,7 @@ def grafico_resumen(eval_rec, eval_cal, eval_vel):
             startangle=90, wedgeprops={"edgecolor": "#0e0e0f", "linewidth": 2})
     ax1.text(0, 0, f"{prec:.0%}", ha="center", va="center",
              fontsize=22, color=GREEN, fontweight="bold")
-    ax1.set_title("Precisión\nrecuperación@5", fontsize=10, color="#c4c2bc")
+    ax1.set_title("Hit@5\npor documento", fontsize=10, color="#c4c2bc")
 
     # ── Panel 2: ROUGE-L ──
     ax2 = fig.add_subplot(gs[0, 1])
